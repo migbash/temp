@@ -1,0 +1,42 @@
+# -----------------------------
+# NOTE: https://github.com/marketplace/actions/github-tag-bump
+# example 2: on merge to master/main
+# -----------------------------
+
+name: Bump version [TEST]
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - dev
+      
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    steps:
+
+    # NOTE: CUSTOM IMPLEMENTATION
+    - name: 'Checkout source code'
+      uses: 'actions/checkout@v3'
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+        GITHUB_MSG: ${{ github.event.commits[0].message }}
+        GITHUB_MSG_2: ${{ github.event.head_commit.message }}
+      run: |
+        echo "$GITHUB_CONTEXT"
+        echo "$GITHUB_MSG"
+        echo "$GITHUB_MSG_2"
+    
+    # - name: Apply version bump (major)
+    #   if: contains(github.event.pull_request.labels.*.name, 'major')
+    #   run: npm version major
+    # - name: Apply version bump (minor)
+    #   if: contains(github.event.pull_request.labels.*.name, 'minor')
+    #   run: npm version minor
+    # - name: Apply version bump (patch)
+    #   if: contains(github.event.pull_request.labels.*.name, 'patch')
+    #   run: npm version patch
