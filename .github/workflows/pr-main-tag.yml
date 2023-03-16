@@ -30,6 +30,7 @@ jobs:
         echo "$GITHUB_CONTEXT"
         echo "$GITHUB_MSG"
         echo "$GITHUB_MSG_2"
+        
     
     # - name: Apply version bump (major)
     #   if: contains(github.event.pull_request.labels.*.name, 'major')
