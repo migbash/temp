@@ -5,6 +5,15 @@
 
 name: Bump version [TEST]
 
+parameters:
+- name: minorWord
+  displayName: Minor wording
+  type: object
+  default:
+    - minor
+    - MINOR
+    - feat
+
 on:
   pull_request:
     types:
@@ -36,7 +45,7 @@ jobs:
     #   run: npm version major
     - name: Apply version bump (minor)
       # if: "contains(github.event.pull_request.title, 'minor')"
-      if: "containsValue(['minor'], 'minor')"
+      if: "containsValue(minorWord, 'minor')"
       run: echo "MINOR detected!" 
     # - name: Apply version bump (patch)
     #   if: contains(github.event.pull_request.labels.*.name, 'patch')
