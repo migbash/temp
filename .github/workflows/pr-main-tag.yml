@@ -37,7 +37,7 @@ jobs:
     - name: Apply version bump (minor)
       if: "contains(github.event.pull_request.title, 'minor')"
       # condition: ${{ containsValue([minor], 'github.event.pull_request.title') }}
-      run: echo "MINOR detected!"
+      run: echo "MINOR detected!" 
     # - name: Apply version bump (patch)
     #   if: contains(github.event.pull_request.labels.*.name, 'patch')
     #   run: npm version patch
