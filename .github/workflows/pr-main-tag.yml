@@ -22,15 +22,9 @@ jobs:
     - name: 'Checkout source code'
       uses: 'actions/checkout@v3'
     - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-        GITHUB_MSG: ${{ github.event.commits[0].message }}
-        GITHUB_MSG_2: ${{ github.event.head_commit.message }}
       run: |
-        echo "$GITHUB_CONTEXT"
-        echo "$GITHUB_MSG"
-        echo "$GITHUB_MSG_2"
-        
+        echo "complete Github Context ${{ toJson(github) }}"
+        echo "The title of PR is: ${{ github.event.pull_request.title }}"
     
     # - name: Apply version bump (major)
     #   if: contains(github.event.pull_request.labels.*.name, 'major')
