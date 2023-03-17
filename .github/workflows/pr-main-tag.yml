@@ -43,6 +43,8 @@ jobs:
           echo "Major Bump Detected"
           npm version major
       - name: Git push version bump
+        # NOTE: Push all the refs that would be pushed without this option, and also push annotated tags in refs/tags that are missing from 
+        # NOTE: the remote but are pointing at commit-ish that are reachable from the refs being pushed.
         run: git push origin dev --follow-tags --force
       - id: set-version
         name: Output version change
