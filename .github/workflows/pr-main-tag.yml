@@ -42,7 +42,6 @@ jobs:
         run: |
           echo "Patch Bump Detected"
           echo "test=hello" >> "$GITHUB_OUTPUT"
-          npm version patch
       - name: MINOR - check
         if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
