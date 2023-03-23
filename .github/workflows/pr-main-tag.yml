@@ -79,7 +79,7 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ needs.build.outputs.output1 == true }}
+    if: ${{ needs.build.outputs.output1 == "true" }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
