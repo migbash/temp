@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
-    if: ${{ $BUMP_VERSION_BOOL == true }}
+    if: ${{ BUMP_VERSION_BOOL == true }}
     steps:
       - env:
           OUTPUT1: ${{ needs.build.outputs.output1 }}
