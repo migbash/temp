@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-22.04
     # Map a step output to a job output
     outputs:
-      output1: ${{ steps.step1.outputs.test }}
+      output1: ${{ steps.step1.outputs.bump_version_bool }}
     steps:
       - name: Datatypes Testing
         run: echo "True"
@@ -38,25 +38,33 @@ jobs:
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
       - name: PATCH - check
+        # if: contains(github.event.pull_request.labels.*.name, 'patch')
         if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Patch Bump Detected"
-          echo "test=hello" >> "$GITHUB_OUTPUT"
+          npm version patch
       - name: MINOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'minor')
         if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Minor Bump Detected"
           npm version minor
       - name: MAJOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
         if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Major Bump Detected"
           npm version major
       - id: step1
         name: BUMP CHECK
-        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) || contains(env.MINOR_WORDING, github.event.pull_request.title) || contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
+        if: '${{ 
+          contains(env.PATCH_WORDING, github.event.pull_request.title) 
+          || contains(env.MINOR_WORDING, github.event.pull_request.title) 
+          || contains(env.MAJOR_WORDING, github.event.pull_request.title) 
+        }}'
         run: |
-          echo "test=hello" >> "$GITHUB_OUTPUT"
+          echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
       - name: Git push version bump
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -65,13 +73,14 @@ jobs:
         # name: Output version change
         # run: npm pkg get version
 
+  # NOTE: 
+  # publishes (this) repository
+  # npm package to npm-registry;
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    if: ${{ needs.build.outputs.output1 == true }}
     steps:
-      - env:
-          OUTPUT1: ${{needs.build.outputs.output1}}
-        run: echo "$OUTPUT1"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
