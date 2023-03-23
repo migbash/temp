@@ -61,9 +61,9 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: git push origin dev --follow-tags --force
-      - id: set-version
-        name: Output version change
-        run: npm pkg get version
+      # - id: set-version
+        # name: Output version change
+        # run: npm pkg get version
 
   publish-npm:
     needs: build
