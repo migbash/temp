@@ -8,7 +8,6 @@ env:
   PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
   MINOR_WORDING: 'MINOR,minor,feat'
   MAJOR_WORDING: 'MAJOR,major,BREAKING'
-  BUMP_VERSION_BOOL: 'false'
 'on':
   pull_request:
     types:
@@ -79,10 +78,12 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    # if: ${{ needs.build.outputs.output1 == true }}
+    env:
+      BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
+    if: ${{ env.BUMP_VERSION_BOOL == true }}
     steps:
       - env:
-          OUTPUT1: ${{needs.build.outputs.output1}}
+          OUTPUT1: ${{ needs.build.outputs.output1 }}
         run: echo "$OUTPUT1"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
