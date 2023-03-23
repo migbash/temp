@@ -42,19 +42,19 @@ jobs:
         if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Patch Bump Detected"
-          npm version patch
+          # npm version patch
       - name: MINOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'minor')
         if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Minor Bump Detected"
-          npm version minor
+          # npm version minor
       - name: MAJOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'major')
         if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Major Bump Detected"
-          npm version major
+          # npm version major
       - id: step1
         name: BUMP CHECK
         # if: contains(github.event.pull_request.labels.*.name, 'major')
