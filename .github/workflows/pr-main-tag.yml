@@ -3,40 +3,74 @@
 # example 2: on merge to master/main
 # -----------------------------
 
-name: Bump version [TEST]
-
-on:
+name: 'Bump version [TEST]'
+env:
+  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
+  MINOR_WORDING: 'MINOR,minor,feat'
+  MAJOR_WORDING: 'MAJOR,major,BREAKING'
+  BUMP_VERSION_BOOL: 'false'
+'on':
   pull_request:
     types:
       - closed
     branches:
       - dev
-      
 jobs:
+
   build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
     steps:
+      - name: Datatypes Testing
+        run: echo "True"
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16 
+      - name: Git config
+        run: |
+          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
+      - name: PATCH - check
+        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Patch Bump Detected"
+          ${{env.BUMP_VERSION_BOOL="true"}}
+          echo ${{env.BUMP_VERSION_BOOL}}
+          npm version patch
+      - name: MINOR - check
+        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Minor Bump Detected"
+          npm version minor
+      - name: MAJOR - check
+        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Major Bump Detected"
+          npm version major
+      - name: Git push version bump
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: git push origin dev --follow-tags --force
+      - id: set-version
+        name: Output version change
+        run: npm pkg get version
 
-    # NOTE: CUSTOM IMPLEMENTATION
-    - name: 'Checkout source code'
-      uses: 'actions/checkout@v3'
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-        GITHUB_MSG: ${{ github.event.commits[0].message }}
-        GITHUB_MSG_2: ${{ github.event.head_commit.message }}
-      run: |
-        echo "$GITHUB_CONTEXT"
-        echo "$GITHUB_MSG"
-        echo "$GITHUB_MSG_2"
-    
-    # - name: Apply version bump (major)
-    #   if: contains(github.event.pull_request.labels.*.name, 'major')
-    #   run: npm version major
-    # - name: Apply version bump (minor)
-    #   if: contains(github.event.pull_request.labels.*.name, 'minor')
-    #   run: npm version minor
-    # - name: Apply version bump (patch)
-    #   if: contains(github.event.pull_request.labels.*.name, 'patch')
-    #   run: npm version patch
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          echo ${{env.BUMP_VERSION_BOOL}}
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
