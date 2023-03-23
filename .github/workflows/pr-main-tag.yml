@@ -53,13 +53,9 @@ jobs:
         run: |
           echo "Major Bump Detected"
           npm version major
-      - name: BUMP CHECK
-        id: step1
-        if: '${{ 
-          contains(env.PATCH_WORDING, github.event.pull_request.title) ||
-          contains(env.MINOR_WORDING, github.event.pull_request.title) ||
-          contains(env.MAJOR_WORDING, github.event.pull_request.title)
-        }}'
+      - id: step1
+        name: BUMP CHECK
+        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) || contains(env.MINOR_WORDING, github.event.pull_request.title) || contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "test=hello" >> "$GITHUB_OUTPUT"
       - name: Git push version bump
@@ -74,9 +70,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - env:
-          OUTPUT1: ${{needs.job1.outputs.output1}}
-      - run: echo "$OUTPUT1"
+      # - env:
+      #     OUTPUT1: ${{needs.job1.outputs.output1}}
+      # - run: echo "$OUTPUT1"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
