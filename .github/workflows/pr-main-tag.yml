@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
-    if: ${{ env.BUMP_VERSION_BOOL == true }}
+    if: ${{ $BUMP_VERSION_BOOL == true }}
     steps:
       - env:
           OUTPUT1: ${{ needs.build.outputs.output1 }}
@@ -90,8 +90,8 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: |
-          echo ${{env.BUMP_VERSION_BOOL}}
+      # - run: |
+      #     echo ${{env.BUMP_VERSION_BOOL}}
       - run: npm ci
       - run: npm publish
         env:
