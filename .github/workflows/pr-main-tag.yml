@@ -7,7 +7,7 @@ name: 'Bump version [TEST]'
 env:
   PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
   MINOR_WORDING: 'MINOR,minor,feat'
-  MAJOR_WORDING: 'MAJOR,,major,BREAKING'
+  MAJOR_WORDING: 'MAJOR,major,BREAKING'
 'on':
   pull_request:
     types:
@@ -15,6 +15,7 @@ env:
     branches:
       - dev
 jobs:
+
   build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
@@ -36,6 +37,8 @@ jobs:
         if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Patch Bump Detected"
+          version_bumbed="true"
+          echo $version_bumbed
           npm version patch
       - name: MINOR - check
         if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
@@ -54,3 +57,19 @@ jobs:
       - id: set-version
         name: Output version change
         run: npm pkg get version
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          echo $version_bumbed
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
