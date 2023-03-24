@@ -111,10 +111,10 @@ jobs:
           registry-url: https://registry.npmjs.org/
       # - run: |
       #     echo ${{env.BUMP_VERSION_BOOL}}
-      - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      # - run: npm ci
+      # - run: npm publish
+        # env:
+          # NODE_AUTH_TOKEN: ${{secrets.npm_token}}
 
   # -----------------------
   # NOTE:
@@ -155,12 +155,12 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-      - name: git reset origin/dev
+      - name: git reset origin/test
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          git checkout main
-          git pull origin main
           git checkout dev
+          git pull origin dev
+          git checkout test
           git reset --hard main
-          git push --force origin dev
+          git push --force origin test
