@@ -87,6 +87,14 @@ jobs:
         run: |
           echo "$OUTPUT1"
           echo "$BUMP_VERSION_BOOL"
+      - name: 'Bump Made?'
+        if: ${{ OUTPUT1 == true }}
+        run: |
+          echo "True!"
+      - name: 'Bump Made? (x2)'
+        if: ${{ BUMP_VERSION_BOOL == true }}
+        run: |
+          echo "True!"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
