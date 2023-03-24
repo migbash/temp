@@ -166,5 +166,5 @@ jobs:
           git checkout dev
           git pull origin dev
           git checkout test
-          git reset --hard main
+          git reset --hard dev
           git push --force origin test
