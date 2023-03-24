@@ -78,23 +78,15 @@ jobs:
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
-    # if: ${{ BUMP_VERSION_BOOL == true }}
+    # env:
+      # BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
+    if: needs.build.outputs.output1 == 'true'
     steps:
       - env:
           OUTPUT1: ${{ needs.build.outputs.output1 }}
         run: |
           echo "$OUTPUT1"
           echo "$BUMP_VERSION_BOOL"
-      - name: 'Bump Made?'
-        if: '${{ OUTPUT1 == true }}'
-        run: |
-          echo "True!"
-      - name: 'Bump Made? (x2)'
-        if: '${{ BUMP_VERSION_BOOL == true }}'
-        run: |
-          echo "True!"
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
