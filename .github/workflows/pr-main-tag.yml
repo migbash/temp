@@ -16,10 +16,15 @@ env:
       - dev
 jobs:
 
+  # -----------------------
+  # NOTE:
+  # -> (on valid) bumps npm version
+  # -> of (this) repository;
+  # -----------------------
   build:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
-    # Map a step output to a job output
+    # [ℹ] map a step output to a job output
     outputs:
       output1: ${{ steps.step1.outputs.bump_version_bool }}
     steps:
@@ -72,15 +77,17 @@ jobs:
         # name: Output version change
         # run: npm pkg get version
 
-  # NOTE: 
-  # publishes (this) repository
-  # npm package to npm-registry;
+  # -----------------------
+  # NOTE:
+  # -> publishes (this) repository
+  # -> npm package to npm-registry;
+  # -----------------------
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     # env:
       # BUMP_VERSION_BOOL: ${{ needs.build.outputs.output1 }}
-    if: needs.build.outputs.output1 == 'true'
+    if: needs.build.outputs.output1 == 'false'
     steps:
       - env:
           OUTPUT1: ${{ needs.build.outputs.output1 }}
