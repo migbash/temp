@@ -136,6 +136,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
+          automatic_release_tag: 'latest'
 
   # -----------------------
   # NOTE:
@@ -165,6 +166,6 @@ jobs:
         run: |
           git checkout dev
           git pull origin dev
-          git checkout test
+          git checkout origin/test
           git reset --hard dev
           git push --force origin test
