@@ -172,6 +172,7 @@ jobs:
   create-release:
     needs: npm-version-bump
     if: needs.npm-version-bump.outputs.output1 == 'true'
+    # (alternative) [#1]
     env:
       RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
     runs-on: ubuntu-22.04
@@ -181,7 +182,8 @@ jobs:
           echo "Creating Release"
           echo "$RELEASE_VERSION"
       - uses: "marvinpinto/action-automatic-releases@latest"
+        # see: https://github.com/marketplace/actions/automatic-releases
         with:
-          automatic_release_tag: "v${{ env.RELEASE_TAG }}"
+          automatic_release_tag: ${{ env.RELEASE_TAG }}
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
