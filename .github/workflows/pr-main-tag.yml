@@ -37,6 +37,7 @@ jobs:
     # SEE: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
       output1: ${{ steps.step1.outputs.bump_version_bool }}
+      output2: ${{ steps.set-version.outputs.release_tag }}
     steps:
       - name: checkout source code
         uses: actions/checkout@v3
@@ -86,8 +87,15 @@ jobs:
         name: output/set version change
         run: | 
           # npm pkg get version
+          echo "release_tag=$(npm pkg get version)" >> "$GITHUB_OUTPUT"
           echo "RELEASE_VERSION=$(npm pkg get version)" >> $GITHUB_ENV
           echo "${{ env.RELEASE_VERSION }}"
+      - name: check output
+        env:
+          RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.set-version.outputs.release_tag }}
 
   # -----------------------
   # NOTE:
