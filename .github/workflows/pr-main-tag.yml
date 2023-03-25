@@ -77,6 +77,8 @@ jobs:
             || contains(env.MINOR_WORDING, github.event.pull_request.title) 
             || contains(env.MAJOR_WORDING, github.event.pull_request.title) 
           }}'
+        # see: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # see: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
         run: |
           echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
       - name: git push version bump
@@ -88,10 +90,7 @@ jobs:
         run: | 
           npm pkg get version
           echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
-          # echo "release_tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-          echo "RELEASE_VERSION=$(npm pkg get version)" >> $GITHUB_ENV
-          echo "${{ env.RELEASE_VERSION }}"
-      - name: check output
+      - name: check output/set version
         env:
           RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
         run: |
@@ -167,8 +166,6 @@ jobs:
   # -> creates a release for (this) repository
   # -> after successfull bump;
   # -> dependent on "npm-version-bump"
-  # TODO:
-  # FIXME: can be another type of workflow;
   # -----------------------
   create-release:
     needs: npm-version-bump
@@ -178,10 +175,6 @@ jobs:
       RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
     runs-on: ubuntu-22.04
     steps:
-      - name: Creating a Release
-        run: |
-          echo "Creating Release"
-          echo "$RELEASE_VERSION"
       - uses: "marvinpinto/action-automatic-releases@latest"
         # see: https://github.com/marketplace/actions/automatic-releases
         with:
