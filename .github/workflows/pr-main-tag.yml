@@ -184,6 +184,6 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         # see: https://github.com/marketplace/actions/automatic-releases
         with:
-          automatic_release_tag: ${{ env.RELEASE_TAG }}
+          automatic_release_tag: $(echo ${{ env.RELEASE_TAG }})
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
