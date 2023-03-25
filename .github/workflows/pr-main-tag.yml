@@ -85,9 +85,9 @@ jobs:
       - id: set-version
         name: output/set version change
         run: | 
-          npm pkg get version
-          echo "RELEASE_VERSION=$(npm pkg get version)" >> "$GITHUB_ENV"
-          echo "$RELEASE_VERSION"
+          # npm pkg get version
+          echo "RELEASE_VERSION=$(npm pkg get version)" >> $GITHUB_ENV
+          echo "${{ env.RELEASE_VERSION }}"
 
   # -----------------------
   # NOTE:
