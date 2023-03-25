@@ -182,6 +182,6 @@ jobs:
           echo "$RELEASE_VERSION"
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          automatic_release_tag: "$RELEASE_VERSION"
+          automatic_release_tag: "v${{ env.RELEASE_TAG }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
