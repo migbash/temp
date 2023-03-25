@@ -118,28 +118,6 @@ jobs:
 
   # -----------------------
   # NOTE:
-  # -> creates a release for (this) repository
-  # -> after successfull bump;
-  # -> dependent on "npm-version-bump"
-  # TODO:
-  # FIXME: can be another type of workflow;
-  # -----------------------
-  create-release:
-    needs: npm-version-bump
-    if: needs.npm-version-bump.outputs.output1 == 'true'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Creating a Release
-        run: |
-          echo "Creating Release"
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: 'latest'
-
-  # -----------------------
-  # NOTE:
   # -> "hard" reset of origin/dev repository
   # -> after successfull PR to (->) main;
   # TODO:
@@ -160,12 +138,35 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-      - name: git reset origin/test
+      - name: git reset origin/test branch
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
+          git fetch
           git checkout dev
           git pull origin dev
-          git checkout origin/test
+          git checkout test
           git reset --hard dev
           git push --force origin test
+
+  # -----------------------
+  # NOTE:
+  # -> creates a release for (this) repository
+  # -> after successfull bump;
+  # -> dependent on "npm-version-bump"
+  # TODO:
+  # FIXME: can be another type of workflow;
+  # -----------------------
+  create-release:
+    needs: npm-version-bump
+    if: needs.npm-version-bump.outputs.output1 == 'true'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Creating a Release
+        run: |
+          echo "Creating Release"
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: 'latest'
