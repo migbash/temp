@@ -173,7 +173,7 @@ jobs:
     needs: npm-version-bump
     if: needs.npm-version-bump.outputs.output1 == 'true'
     env:
-      RELEASE_TAG: needs.npm-version-bump.outputs.output2
+      RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
     runs-on: ubuntu-22.04
     steps:
       - name: Creating a Release
