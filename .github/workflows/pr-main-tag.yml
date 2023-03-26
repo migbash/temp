@@ -13,7 +13,7 @@ env:
     types:
       - closed
     branches:
-      - dev
+      - main
 jobs:
 
   # purely for testing purposes
@@ -84,7 +84,7 @@ jobs:
       - name: git push version bump
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: git push origin dev --follow-tags --force
+        run: git push origin main --follow-tags --force
       - id: set-version
         name: output/set version change
         run: | 
@@ -130,10 +130,10 @@ jobs:
 
   # -----------------------
   # NOTE:
-  # -> "hard" reset of origin/dev repository
+  # -> "hard" reset of origin/main repository
   # -> after successfull PR to (->) main;
   # -----------------------
-  develop-branch-reset:
+  main-branch-reset:
     needs: npm-version-bump
     runs-on: ubuntu-22.04
     steps:
@@ -155,11 +155,11 @@ jobs:
         run: |
           # IMPORTANT
           git fetch
+          git checkout main
+          git pull origin main
           git checkout dev
-          git pull origin dev
-          git checkout test
-          git reset --hard dev
-          git push --force origin test
+          git reset --hard main
+          git push --force origin dev
 
   # -----------------------
   # NOTE:
