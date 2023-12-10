@@ -24,9 +24,13 @@ jobs:
   npm-version-bump:
     name: NPM Version Bump
     runs-on: ubuntu-22.04
-    env:
-      GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
     steps:
+      - name: my-app-install token
+        id: my-app
+        uses: getsentry/action-github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.GH_APP_BOT }}
 
       - name: "STEP :|: checkout source code"
         uses: actions/checkout@v4
@@ -39,6 +43,7 @@ jobs:
         # env:
           # GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           # token: '${{ secrets.GH_TOKEN }}'
+          token: '${{ steps.my-app.outputs.token }}'
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
@@ -53,13 +58,6 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-
-      - name: my-app-install token
-        id: my-app
-        uses: getsentry/action-github-app-token@v2
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.GH_APP_BOT }}
 
       # ▓ NOTE:
       # ▓ > ❌ [1]
@@ -83,8 +81,6 @@ jobs:
         run: echo "Sorry! Your permissions are insufficient."
 
       - name: git push version bump
-        env:
-          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
         run: |
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
@@ -100,3 +96,5 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
+        env:
+          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
