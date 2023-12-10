@@ -45,7 +45,7 @@ jobs:
     name: NPM Version Bump
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
-    # [ℹ] map a step output to a job output
+    # [ℹi] map a step output to a job output
     # SEE: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
       output1: ${{ steps.step1.outputs.bump_version_bool }}
