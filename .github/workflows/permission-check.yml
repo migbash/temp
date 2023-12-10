@@ -15,7 +15,7 @@ env:
   MINOR_WORDING: 'MINOR,minor,feat'
   MAJOR_WORDING: 'MAJOR,major,BREAKING'
 
-# https://docs.github.com/en/actions/security-guides/automatic-token-authentication
+# 🔗 read-more :|: https://docs.github.com/en/actions/security-guides/automatic-token-authentication
 permissions: write-all
 
 jobs:
@@ -54,13 +54,16 @@ jobs:
       # ▓ > ❌ [1]
       # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
       # ▓ > gives the correct ADMIN permissions.
+      # ▓ > 🔗 [2] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
+      # ▓ > 🔗 [3] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
       - name: "CHECK :|: git config"
         id: check
         uses: scherermichael-oss/action-has-permission@master
         with:
           required-permission: admin
         env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          # GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' # [2]
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}' # [3]
       - name: Run only if user has sufficient permissions
         if: steps.check.outputs.has-permission
         run: echo "Congratulations! Your permissions to access the repository are sufficient."
