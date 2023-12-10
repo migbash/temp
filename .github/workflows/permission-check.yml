@@ -86,6 +86,8 @@ jobs:
         run: echo "Sorry! Your permissions are insufficient."
 
       - name: git push version bump
+        env:
+          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
         run: |
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
@@ -102,5 +104,4 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
-        env:
-          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
+
