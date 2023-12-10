@@ -54,6 +54,13 @@ jobs:
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
 
+      - name: my-app-install token
+        id: my-app
+        uses: getsentry/action-github-app-token@v2
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.GH_APP_BOT }}
+
       # ▓ NOTE:
       # ▓ > ❌ [1]
       # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
@@ -77,7 +84,7 @@ jobs:
 
       - name: git push version bump
         env:
-          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
+          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
         run: |
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
