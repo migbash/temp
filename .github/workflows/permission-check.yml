@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: checkout source code
         uses: actions/checkout@v4
+        with:
+          ref: dev
         env:
           token: '${{ secrets.GH_TOKEN }}'
       - name: node config
