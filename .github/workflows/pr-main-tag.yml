@@ -19,7 +19,7 @@ permissions:
     types:
       - closed
     branches:
-      - dev
+      - main
 
 jobs:
 
@@ -39,7 +39,7 @@ jobs:
   # -----------------------
   npm-version-bump:
     name: NPM Version Bump
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
     # [ℹ] map a step output to a job output
     # SEE: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
