@@ -66,6 +66,8 @@ jobs:
           echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
           echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
           echo > text.txt
+          git add .
+          git commit -m "test"
           git push origin main --follow-tags --force
         env:
           GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
