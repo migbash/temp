@@ -46,7 +46,7 @@ jobs:
           token: '${{ steps.my-app.outputs.token }}'
           persist-credentials: false
           fetch-depth: 0
-          repository: migbash/temp
+          repository: https://github.com/migbash/temp
           ref: 'dev'
 
       - name: "STEP :|: node config"
