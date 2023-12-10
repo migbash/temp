@@ -74,7 +74,7 @@
           with:
             required-permission: admin
           env:
-            GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
+            GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         # Use the output from the `check` step
         - name: Run only if user has sufficient permissions
           if: steps.check.outputs.has-permission
@@ -114,13 +114,13 @@
           run: |
             echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
         - name: git push version bump
-          env:
-            GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           run: |
             echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
             echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
             echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
             git push origin main --follow-tags --force
+          env:
+            GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
         - id: set-version
           name: output/set version change
           run: |
