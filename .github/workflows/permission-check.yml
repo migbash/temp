@@ -44,6 +44,7 @@ jobs:
           # GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           # token: '${{ secrets.GH_TOKEN }}'
           token: '${{ steps.my-app.outputs.token }}'
+          persist-credentials: false
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
