@@ -5,25 +5,12 @@
 
 name: 'Bump version [TEST]'
 
-env:
-PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
-MINOR_WORDING: 'MINOR,minor,feat'
-MAJOR_WORDING: 'MAJOR,major,BREAKING'
-
-# https://docs.github.com/en/actions/security-guides/automatic-token-authentication
-permissions:
-actions: write
-contents: write
-pull-requests: write
-issues: read
-packages: none
-
 'on':
-pull_request:
-  types:
-    - closed
-  branches:
-    - main
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
 env:
   PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
@@ -40,13 +27,6 @@ permissions:
   deployments: write
   statuses: write
   checks: read
-
-'on':
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
 
 jobs:
 
