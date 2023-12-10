@@ -99,7 +99,9 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          echo "git config --list"
+          echo git config user.name
+          echo git config user.email
+          echo '${{ secrets.GH_TOKEN }}'
           git push origin main --follow-tags --force
       - id: set-version
         name: output/set version change
