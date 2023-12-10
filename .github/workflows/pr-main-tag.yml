@@ -114,6 +114,8 @@
           run: |
             echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
         - name: git push version bump
+          env:
+            GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           run: |
             echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
             echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
