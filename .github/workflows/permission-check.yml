@@ -1,0 +1,71 @@
+# -----------------------------
+# NOTE: https://github.com/marketplace/actions/github-tag-bump
+# example 2: on merge to master/main
+# -----------------------------
+
+name: 'Bump version [TEST]'
+
+'on':
+  push:
+    branches:
+      - dev
+
+env:
+  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
+  MINOR_WORDING: 'MINOR,minor,feat'
+  MAJOR_WORDING: 'MAJOR,major,BREAKING'
+
+# https://docs.github.com/en/actions/security-guides/automatic-token-authentication
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  issues: read
+  packages: none
+  deployments: write
+  statuses: write
+  checks: read
+
+jobs:
+
+  npm-version-bump:
+    name: NPM Version Bump
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v4
+        env:
+          token: '${{ secrets.GH_TOKEN }}'
+      - name: node config
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: git config
+        run: |
+          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
+
+      # Check for write permission
+      - name: Check user permission
+        id: check
+        uses: scherermichael-oss/action-has-permission@master
+        with:
+          required-permission: admin
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      # Use the output from the `check` step
+      - name: Run only if user has sufficient permissions
+        if: steps.check.outputs.has-permission
+        run: echo "Congratulations! Your permissions to access the repository are sufficient."
+      - name: Run only if user has NOT sufficient permissions
+        if: "! steps.check.outputs.has-permission"
+        run: echo "Sorry! Your permissions are insufficient."
+      - name: git push version bump
+        run: |
+          echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
+          echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
+          echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+          echo > text.txt
+          git push origin main --follow-tags --force
+        env:
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
