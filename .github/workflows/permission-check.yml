@@ -36,18 +36,18 @@ jobs:
       - name: "STEP :|: checkout source code"
         uses: actions/checkout@v4
         with:
-        # ▓ NOTE:
+          ref: 'dev'
+          # ▓ NOTE:
         # ▓ > ❌ [1]
         # ▓ > updating the use of the Personal Access Token (PAT) instead of the
         # ▓ > 'GITHUB_TOKEN' does not seem to be working.
-        # env:
-          # GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
+        env:
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           # token: '${{ secrets.GH_TOKEN }}'
-          token: '${{ steps.my-app.outputs.token }}'
-          persist-credentials: false
-          fetch-depth: 0
-          repository: ${{ github.repository }}
-          ref: 'dev'
+          # token: '${{ steps.my-app.outputs.token }}'
+          # persist-credentials: false
+          # fetch-depth: 0
+          # repository: ${{ github.repository }}
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
@@ -62,7 +62,7 @@ jobs:
         run: |
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-          git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
+          # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
 
       # ▓ NOTE:
       # ▓ > ❌ [1]
