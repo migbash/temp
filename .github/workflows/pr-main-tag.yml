@@ -8,6 +8,12 @@ env:
   PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
   MINOR_WORDING: 'MINOR,minor,feat'
   MAJOR_WORDING: 'MAJOR,major,BREAKING'
+permissions:
+  actions: write
+  contents: write
+  pull-requests: write
+  issues: read
+  packages: none
 'on':
   pull_request:
     types:
@@ -45,7 +51,7 @@ jobs:
         uses: actions/checkout@v4
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          persist-credentials: ''
+          persist-credentials: true
       - name: node config
         uses: actions/setup-node@v3
         with:
@@ -87,7 +93,9 @@ jobs:
       - name: git push version bump
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: git push origin main --follow-tags --force
+        run: |
+          git config --list
+          git push origin main --follow-tags --force
       - id: set-version
         name: output/set version change
         run: |
@@ -108,7 +116,8 @@ jobs:
   # -----------------------
   npm-publish:
     needs: npm-version-bump
-    if: needs.npm-version-bump.outputs.output1 == 'true'
+    if: false
+    # if: needs.npm-version-bump.outputs.output1 == 'true'
     runs-on: ubuntu-22.04
     # (example) [1]
     # env:
