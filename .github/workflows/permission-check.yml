@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
 
-      - name: my-app-install token
+      - name: "STEP :|: my-app-install token"
         id: my-app
         uses: getsentry/action-github-app-token@v2
         with:
@@ -37,17 +37,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 'dev'
-          # ▓ NOTE:
-        # ▓ > ❌ [1]
-        # ▓ > updating the use of the Personal Access Token (PAT) instead of the
-        # ▓ > 'GITHUB_TOKEN' does not seem to be working.
         env:
-          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
-          # token: '${{ secrets.GH_TOKEN }}'
+          # ▓ NOTE:
+          # ▓ > ❌ [0]
+          # GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          # persist-credentials: false
+          # ▓ NOTE:
+          # ▓ > ❌ [1]
+          # ▓ > using Personal Access Token (PTA)
+          token: '${{ secrets.GH_TOKEN }}'
+          persist-credentials: false
+          # ▓ NOTE:
+          # ▓ > ❌ [2]
+          # ▓ > using GitHub App Token.
           # token: '${{ steps.my-app.outputs.token }}'
           # persist-credentials: false
           # fetch-depth: 0
           # repository: ${{ github.repository }}
+
+      - name: "STEP :|: git config"
+        run: |
+          # ▓ NOTE:
+          # ▓ > ❌ [1]
+          # ▓ > changing the secret value for GH_ORG_NAME from 'CI Bot' to 'MigBash' did not
+          # ▓ > work as intended, and permission error for the GitHub Action persists.
+          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
+          # ▓ NOTE:
+          # ▓ > ❌ [2]
+          # ▓ 🔗 :|: https://github.com/orgs/community/discussions/26580
+          # ▓ 🔗 :|: https://github.com/actions/checkout/issues/664
+          # ▓ 🔗 :|: https://github.com/intuit/auto/issues/1034
+          # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
@@ -56,18 +77,8 @@ jobs:
 
       # ▓ NOTE:
       # ▓ > ❌ [1]
-      # ▓ > changing the secret value for GH_ORG_NAME from 'CI Bot' to 'MigBash' did not
-      # ▓ > work as intended, and permission error for the GitHub Action persists.
-      - name: "STEP :|: git config"
-        run: |
-          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
-          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
-          # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
-
-      # ▓ NOTE:
-      # ▓ > ❌ [1]
       # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
-      # ▓ > gives the correct ADMIN permissions.
+      # ▓ > gives the correct ADMIN permissions for the repository.
       # ▓ > 🔗 [2] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
       # ▓ > 🔗 [3] :|: https://github.com/migbash/temp/actions/runs/7160183755/job/19494270686
       - name: "CHECK :|: permissions check"
@@ -92,11 +103,11 @@ jobs:
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
           # ▓ > and are of the correct values.
-          echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
-          echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
-          echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
-          echo '${{ secrets.GITHUB_TOKEN }}' | sed 's/./& /g'
-          echo '${{ steps.my-app.outputs.token }}' | sed 's/./& /g'
+          # echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
+          # echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
+          # echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+          # echo '${{ secrets.GITHUB_TOKEN }}' | sed 's/./& /g'
+          # echo '${{ steps.my-app.outputs.token }}' | sed 's/./& /g'
 
           # ▓ NOTE:
           # ▓ > testing new file persistance for github push.
