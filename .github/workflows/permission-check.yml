@@ -16,15 +16,7 @@ env:
   MAJOR_WORDING: 'MAJOR,major,BREAKING'
 
 # https://docs.github.com/en/actions/security-guides/automatic-token-authentication
-permissions:
-  actions: write
-  contents: write
-  pull-requests: write
-  issues: read
-  packages: none
-  deployments: write
-  statuses: write
-  checks: read
+permissions: write-all
 
 jobs:
 
@@ -32,41 +24,61 @@ jobs:
     name: NPM Version Bump
     runs-on: ubuntu-22.04
     steps:
-      - name: checkout source code
+
+      - name: "STEP :|: checkout source code"
         uses: actions/checkout@v4
         with:
           ref: dev
+        # ▓ NOTE:
+        # ▓ > ❌ [1]
+        # ▓ > updating the use of the Personal Access Token (PAT) instead of the
+        # ▓ > 'GITHUB_TOKEN' does not seem to be working.
         env:
           token: '${{ secrets.GH_TOKEN }}'
-      - name: node config
+
+      - name: "STEP :|: node config"
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: git config
+
+      # ▓ NOTE:
+      # ▓ > ❌ [1]
+      # ▓ > changing the secret value for GH_ORG_NAME from 'CI Bot' to 'MigBash' did not
+      # ▓ > work as intended, and permission error for the GitHub Action persists.
+      - name: "STEP :|: git config"
         run: |
           git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
 
-      # Check for write permission
-      - name: Check user permission
+      # ▓ NOTE:
+      # ▓ > ❌ [1]
+      # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
+      # ▓ > gives the correct ADMIN permissions.
+      - name: "CHECK :|: git config"
         id: check
         uses: scherermichael-oss/action-has-permission@master
         with:
           required-permission: admin
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-      # Use the output from the `check` step
       - name: Run only if user has sufficient permissions
         if: steps.check.outputs.has-permission
         run: echo "Congratulations! Your permissions to access the repository are sufficient."
       - name: Run only if user has NOT sufficient permissions
         if: "! steps.check.outputs.has-permission"
         run: echo "Sorry! Your permissions are insufficient."
+
       - name: git push version bump
         run: |
-          echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
-          echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
-          echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+          # ▓ NOTE:
+          # ▓ > 🟩 correct secrets are retrived
+          # ▓ > and are of the correct values.
+          # echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
+          # echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
+          # echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+
+          # ▓ NOTE:
+          # ▓ > testing new file persistance for github push.
           echo > text.txt
           git add .
           git commit -m "test"
