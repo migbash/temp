@@ -14,6 +14,7 @@ env:
   PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
   MINOR_WORDING: 'MINOR,minor,feat'
   MAJOR_WORDING: 'MAJOR,major,BREAKING'
+  ACTIONS_RUNNER_DEBUG: true
 
 # 🔗 read-more :|: https://docs.github.com/en/actions/security-guides/automatic-token-authentication
 permissions: write-all
@@ -75,6 +76,8 @@ jobs:
         run: echo "Sorry! Your permissions are insufficient."
 
       - name: git push version bump
+        env:
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
         run: |
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
@@ -90,5 +93,3 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
-        env:
-          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
