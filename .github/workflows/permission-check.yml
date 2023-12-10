@@ -43,10 +43,10 @@ jobs:
         # env:
           # GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
           # token: '${{ secrets.GH_TOKEN }}'
-          token: '${{ steps.my-app.outputs.token }}'
+          # token: '${{ steps.my-app.outputs.token }}'
           persist-credentials: false
           fetch-depth: 0
-          repository: https://github.com/migbash/temp
+          repository: migbash/temp
           ref: 'dev'
 
       - name: "STEP :|: node config"
@@ -101,5 +101,5 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
-        # env:
-        #   GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
+        env:
+          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
