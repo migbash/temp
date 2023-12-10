@@ -36,7 +36,6 @@ jobs:
       - name: "STEP :|: checkout source code"
         uses: actions/checkout@v4
         with:
-          ref: dev
         # ▓ NOTE:
         # ▓ > ❌ [1]
         # ▓ > updating the use of the Personal Access Token (PAT) instead of the
@@ -47,6 +46,8 @@ jobs:
           token: '${{ steps.my-app.outputs.token }}'
           persist-credentials: false
           fetch-depth: 0
+          repository: migbash/temp
+          ref: 'dev'
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
