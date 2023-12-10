@@ -70,11 +70,6 @@ jobs:
           # ▓ 🔗 :|: https://github.com/intuit/auto/issues/1034
           # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
 
-      - name: "STEP :|: node config"
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
       # ▓ NOTE:
       # ▓ > ❌ [1]
       # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
@@ -97,8 +92,6 @@ jobs:
         run: echo "Sorry! Your permissions are insufficient."
 
       - name: git push version bump
-        env:
-          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
         run: |
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
@@ -115,4 +108,6 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
+        env:
+          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
 
