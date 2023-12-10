@@ -25,6 +25,7 @@ jobs:
     name: NPM Version Bump
     runs-on: ubuntu-22.04
     steps:
+
       - name: my-app-install token
         id: my-app
         uses: getsentry/action-github-app-token@v2
@@ -45,6 +46,7 @@ jobs:
           # token: '${{ secrets.GH_TOKEN }}'
           token: '${{ steps.my-app.outputs.token }}'
           persist-credentials: false
+          fetch-depth: 0
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
@@ -86,10 +88,11 @@ jobs:
           # ▓ NOTE:
           # ▓ > 🟩 correct secrets are retrived
           # ▓ > and are of the correct values.
-          # echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
-          # echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
-          # echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
-          # echo '${{ secrets.GITHUB_TOKEN }}' | sed 's/./& /g'
+          echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
+          echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
+          echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+          echo '${{ secrets.GITHUB_TOKEN }}' | sed 's/./& /g'
+          echo '${{ steps.my-app.outputs.token }}' | sed 's/./& /g'
 
           # ▓ NOTE:
           # ▓ > testing new file persistance for github push.
@@ -97,5 +100,5 @@ jobs:
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
-        env:
-          GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
+        # env:
+        #   GITHUB_TOKEN: '${{ steps.my-app.outputs.token }}'
