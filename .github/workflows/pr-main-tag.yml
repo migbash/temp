@@ -60,30 +60,33 @@ jobs:
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
       - name: PATCH - check
         # if: contains(github.event.pull_request.labels.*.name, 'patch')
-        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
+        if: true
         run: |
           echo "Patch Bump Detected"
           npm version patch
       - name: MINOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'minor')
-        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+        # if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+        if: false
         run: |
           echo "Minor Bump Detected"
           npm version minor
       - name: MAJOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'major')
-        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        # if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        if: false
         run: |
           echo "Major Bump Detected"
           npm version major
       - id: step1
         name: BUMP - check
         # if: contains(github.event.pull_request.labels.*.name, 'major')
-        if: '${{
-            contains(env.PATCH_WORDING, github.event.pull_request.title)
-            || contains(env.MINOR_WORDING, github.event.pull_request.title)
-            || contains(env.MAJOR_WORDING, github.event.pull_request.title)
-          }}'
+        if: false
+        # if: '${{
+        #     contains(env.PATCH_WORDING, github.event.pull_request.title)
+        #     || contains(env.MINOR_WORDING, github.event.pull_request.title)
+        #     || contains(env.MAJOR_WORDING, github.event.pull_request.title)
+        #   }}'
         # see: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
         # see: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
         run: |
