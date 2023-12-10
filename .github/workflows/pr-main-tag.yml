@@ -37,7 +37,7 @@ jobs:
   # -----------------------
   npm-version-bump:
     name: NPM Version Bump
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-22.04
     # [ℹ] map a step output to a job output
     # SEE: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
@@ -114,7 +114,8 @@ jobs:
   # -----------------------
   npm-publish:
     needs: npm-version-bump
-    if: needs.npm-version-bump.outputs.output1 == 'true'
+    if: false
+    # if: needs.npm-version-bump.outputs.output1 == 'true'
     runs-on: ubuntu-22.04
     # (example) [1]
     # env:
