@@ -99,8 +99,8 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          echo git config user.name | sed 's/./& /g'
-          echo git config user.email | sed 's/./& /g'
+          git config user.name
+          git config user.email
           echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
           git push origin main --follow-tags --force
       - id: set-version
