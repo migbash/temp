@@ -15,7 +15,9 @@ permissions:
   issues: read
   packages: none
 'on':
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - dev
 
@@ -60,33 +62,30 @@ jobs:
           git config --global user.name "${{ secrets.GH_ORG_NAME }}"
       - name: PATCH - check
         # if: contains(github.event.pull_request.labels.*.name, 'patch')
-        if: true
+        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Patch Bump Detected"
           npm version patch
       - name: MINOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'minor')
-        # if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
-        if: false
+        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Minor Bump Detected"
           npm version minor
       - name: MAJOR - check
         # if: contains(github.event.pull_request.labels.*.name, 'major')
-        # if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
-        if: false
+        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
         run: |
           echo "Major Bump Detected"
           npm version major
       - id: step1
         name: BUMP - check
         # if: contains(github.event.pull_request.labels.*.name, 'major')
-        if: false
-        # if: '${{
-        #     contains(env.PATCH_WORDING, github.event.pull_request.title)
-        #     || contains(env.MINOR_WORDING, github.event.pull_request.title)
-        #     || contains(env.MAJOR_WORDING, github.event.pull_request.title)
-        #   }}'
+        if: '${{
+            contains(env.PATCH_WORDING, github.event.pull_request.title)
+            || contains(env.MINOR_WORDING, github.event.pull_request.title)
+            || contains(env.MAJOR_WORDING, github.event.pull_request.title)
+          }}'
         # see: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
         # see: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
         run: |
@@ -95,8 +94,8 @@ jobs:
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          echo "git config --list"
-          git push origin dev --follow-tags --force
+          git config --list
+          git push origin main --follow-tags --force
       - id: set-version
         name: output/set version change
         run: |
