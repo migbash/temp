@@ -23,6 +23,8 @@ jobs:
   npm-version-bump:
     name: NPM Version Bump
     runs-on: ubuntu-22.04
+    env:
+      GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
     steps:
 
       - name: "STEP :|: checkout source code"
@@ -33,8 +35,9 @@ jobs:
         # ▓ > ❌ [1]
         # ▓ > updating the use of the Personal Access Token (PAT) instead of the
         # ▓ > 'GITHUB_TOKEN' does not seem to be working.
-        env:
-          token: '${{ secrets.GH_TOKEN }}'
+        # env:
+          # GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
+          # token: '${{ secrets.GH_TOKEN }}'
 
       - name: "STEP :|: node config"
         uses: actions/setup-node@v3
@@ -55,8 +58,8 @@ jobs:
       # ▓ > using either 'GITHUB_TOKEN' or 'GH_TOKEN'
       # ▓ > gives the correct ADMIN permissions.
       # ▓ > 🔗 [2] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
-      # ▓ > 🔗 [3] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
-      - name: "CHECK :|: git config"
+      # ▓ > 🔗 [3] :|: https://github.com/migbash/temp/actions/runs/7160183755/job/19494270686
+      - name: "CHECK :|: permissions check"
         id: check
         uses: scherermichael-oss/action-has-permission@master
         with:
@@ -79,6 +82,7 @@ jobs:
           # echo '${{ secrets.GH_ORG_NAME }}' | sed 's/./& /g'
           # echo '${{ secrets.GH_ORG_EMAIL }}' | sed 's/./& /g'
           # echo '${{ secrets.GH_TOKEN }}' | sed 's/./& /g'
+          # echo '${{ secrets.GITHUB_TOKEN }}' | sed 's/./& /g'
 
           # ▓ NOTE:
           # ▓ > testing new file persistance for github push.
