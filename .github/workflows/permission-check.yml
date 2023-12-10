@@ -70,6 +70,6 @@ jobs:
           echo > text.txt
           git add .
           git commit -m "test"
-          git push origin main --follow-tags --force
+          git push origin dev --follow-tags --force
         env:
           GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}'
