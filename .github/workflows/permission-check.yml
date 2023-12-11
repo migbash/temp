@@ -102,7 +102,7 @@ jobs:
 
           # ▓ NOTE:
           # ▓ > testing new file persistance for github push.
-          echo > text.txt
+          echo > text2.txt
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
