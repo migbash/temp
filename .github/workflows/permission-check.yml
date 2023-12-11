@@ -65,8 +65,8 @@ jobs:
           # ▓ 🔗 :|: https://github.com/orgs/community/discussions/26580
           # ▓ 🔗 :|: https://github.com/actions/checkout/issues/664
           # ▓ 🔗 :|: https://github.com/intuit/auto/issues/1034
-          git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
-          # git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
+          # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
+          git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
 
       # ▓ NOTE:
       # ▓ > ❌ [1]
