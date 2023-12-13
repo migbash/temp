@@ -37,11 +37,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           # ▓ NOTE:
-          # ▓ > ❌ using Personal Access Token (PTA)
-          # token: '${{ secrets.GH_TOKEN }}'
+          # ▓ > 🟩 using Personal Access Token (PTA)
+          # ▓ >
+          token: '${{ secrets.GH_TOKEN }}'
           # ▓ NOTE:
           # ▓ > ❌ [2] using GitHub App Token.
-          token: '${{ steps.my-app.outputs.token }}'
+          # token: '${{ steps.my-app.outputs.token }}'
           ref: 'dev'
           fetch-depth: 0
           persist-credentials: false
@@ -102,7 +103,7 @@ jobs:
 
           # ▓ NOTE:
           # ▓ > testing new file persistance for github push.
-          echo > text2.txt
+          echo > text3.txt
           git add .
           git commit -m "test"
           git push origin dev --follow-tags --force
