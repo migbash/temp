@@ -38,15 +38,18 @@ jobs:
         with:
           # ▓ NOTE:
           # ▓ > 🟩 using Personal Access Token (PTA)
-          # ▓ >
+          # ▓ > works correctly, when configured with
+          # ▓ > the parameters that follow.
           token: '${{ secrets.GH_TOKEN }}'
           # ▓ NOTE:
           # ▓ > ❌ [2] using GitHub App Token.
           # token: '${{ steps.my-app.outputs.token }}'
-          ref: 'dev'
-          fetch-depth: 0
+          # ref: 'dev'
+          # fetch-depth: 0
+          # ▓ NOTE:
+          # ▓ > not required, when tested with (PAT).
           # persist-credentials: false
-          repository: ${{ github.repository }}
+          # repository: ${{ github.repository }}
         # env:
           # ▓ NOTE:
           # ▓ > ❌ [0]
@@ -67,6 +70,8 @@ jobs:
           # ▓ 🔗 :|: https://github.com/actions/checkout/issues/664
           # ▓ 🔗 :|: https://github.com/intuit/auto/issues/1034
           # git config --global url.https://${{ steps.my-app.outputs.token }}@github.com/.insteadOf https://github.com/
+          # ▓ NOTE:
+          # ▓ > not required, when tested with (PAT).
           # git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
 
       # ▓ NOTE:
