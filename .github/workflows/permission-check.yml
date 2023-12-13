@@ -35,12 +35,12 @@ jobs:
 
       - name: "STEP :|: checkout source code"
         uses: actions/checkout@v4
-        # with:
+        with:
           # ▓ NOTE:
           # ▓ > 🟩 using Personal Access Token (PTA)
           # ▓ > works correctly, when configured with
           # ▓ > the parameters that follow.
-          # token: '${{ secrets.GH_TOKEN }}'
+          token: '${{ secrets.GH_TOKEN }}'
           # ▓ NOTE:
           # ▓ > ❌ [2] using GitHub App Token.
           # token: '${{ steps.my-app.outputs.token }}'
@@ -80,20 +80,20 @@ jobs:
       # ▓ > gives the correct ADMIN permissions for the repository.
       # ▓ > 🔗 [2] :|: https://github.com/migbash/temp/actions/runs/7160175786/job/19494253126
       # ▓ > 🔗 [3] :|: https://github.com/migbash/temp/actions/runs/7160183755/job/19494270686
-      # - name: "CHECK :|: permissions check"
-      #   id: check
-      #   uses: scherermichael-oss/action-has-permission@master
-      #   with:
-      #     required-permission: admin
-      #   env:
-      #     # GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' # [2]
-      #     GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}' # [3]
-      # - name: Run only if user has sufficient permissions
-      #   if: steps.check.outputs.has-permission
-      #   run: echo "Congratulations! Your permissions to access the repository are sufficient."
-      # - name: Run only if user has NOT sufficient permissions
-      #   if: "! steps.check.outputs.has-permission"
-      #   run: echo "Sorry! Your permissions are insufficient."
+      - name: "CHECK :|: permissions check"
+        id: check
+        uses: scherermichael-oss/action-has-permission@master
+        with:
+          required-permission: admin
+        env:
+          # GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' # [2]
+          GITHUB_TOKEN: '${{ secrets.GH_TOKEN }}' # [3]
+      - name: Run only if user has sufficient permissions
+        if: steps.check.outputs.has-permission
+        run: echo "Congratulations! Your permissions to access the repository are sufficient."
+      - name: Run only if user has NOT sufficient permissions
+        if: "! steps.check.outputs.has-permission"
+        run: echo "Sorry! Your permissions are insufficient."
 
       - name: git push version bump
         run: |
