@@ -1,0 +1,235 @@
+# ╭──────────────────────────────────────────────────────────────────╮
+# │ 🐙 GITHUB ACIONS CI/CD WORKFLOW                                  │
+# ┣──────────────────────────────────────────────────────────────────┫
+# │ Responsible for:                                                 │
+# │ ➤ [1] auto-bump of project version.                              │
+# │ ➤ [2] auto-reset dev (branch) to main state.                     │
+# │ ➤ [3] auto-create release + tag of project.                      │
+# │ ➤ [4] auto-deploy project to target server.                      │
+# ╰──────────────────────────────────────────────────────────────────╯
+
+name: Bump│Publish│Reset│Release
+
+env:
+  # MINOR_ARRAY: '["Minor", "MINOR"]' # TEST with arrays
+  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
+  MINOR_WORDING: 'MINOR,minor,feat'
+  MAJOR_WORDING: 'MAJOR,major,BREAKING'
+
+'on':
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [1] auto-bump of project version.                              │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  npm-version-bump:
+    name: NPM Version Bump
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    # ▓ NOTE:
+    # ▓ > map a step output to a job output.
+    # ▓ > 🔗 read-more :|: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      output1: ${{ steps.step1.outputs.bump_version_bool }}
+      output2: ${{ steps.set-version.outputs.release_tag }}
+    steps:
+
+      - name: "STEP :|: checkout source code"
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          ref: 'dev'
+          fetch-depth: 0
+          persist-credentials: false
+          repository: ${{ github.repository }}
+        # env:
+          # ▓ NOTE:
+          # ▓ > ❌ [0]
+          # GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: "STEP :|: git config"
+        run: |
+          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
+          git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
+
+      - name: "STEP :|: node config"
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.17.0
+
+      - name: "STEP :|: npm config"
+        run: |
+          npm install -g npm@8.19.1
+
+      - name: PATCH - check
+        # if: contains(github.event.pull_request.labels.*.name, 'patch')
+        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Patch Bump Detected"
+          npm version patch
+
+      - name: MINOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'minor')
+        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Minor Bump Detected"
+          npm version minor
+
+      - name: MAJOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
+        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Major Bump Detected"
+          npm version major
+
+      - name: "STEP :|: version bump check"
+        id: step1
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
+        if: '${{
+            contains(env.PATCH_WORDING, github.event.pull_request.title)
+            || contains(env.MINOR_WORDING, github.event.pull_request.title)
+            || contains(env.MAJOR_WORDING, github.event.pull_request.title)
+          }}'
+        # ▓ > 🔗 read-more :|: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # ▓ > 🔗 read-more :|: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
+        run: |
+          echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
+
+      - name: "STEP :|: git push version bump"
+        run: |
+          git push origin main --follow-tags --force
+
+      - name: "STEP :|: set version"
+        id: set-version
+        run: |
+          npm pkg get version
+          echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
+
+      - name: "STEP :|: check output/set version"
+        env:
+          RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.set-version.outputs.release_tag }}
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [3] auto-create release + tag of project.                      │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  create-release:
+    name: Git Create Release
+    needs: npm-version-bump
+    if: needs.npm-version-bump.outputs.output1 == 'true'
+    # ▓ (alternative) [#1]
+    env:
+      RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: "STEP :|: checkout source code"
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          ref: 'dev'
+          fetch-depth: 0
+          persist-credentials: false
+          repository: ${{ github.repository }}
+
+      - name: "STEP :|: git config"
+        run: |
+          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
+          git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        # ▓ > 🔗 read-more :|: https://github.com/marketplace/actions/automatic-releases
+        with:
+          automatic_release_tag: "v${{ env.RELEASE_TAG }}"
+          repo_token: "${{ secrets.GH_TOKEN }}"
+          prerelease: false
+
+      - name: update CHANGELOG.md
+        run: |
+          # NOTE: ▓ IMPORTANT
+          make changelog-init
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [2] auto-reset dev (branch) to main state.                     │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  dev-branch-reset:
+    name: Git Reset Dev
+    needs: create-release
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: "STEP :|: checkout source code"
+        uses: actions/checkout@v4
+        with:
+          token: '${{ secrets.GH_TOKEN }}'
+          ref: 'dev'
+          fetch-depth: 0
+          persist-credentials: false
+          repository: ${{ github.repository }}
+
+      - name: "STEP :|: git config"
+        run: |
+          git config --local user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --local user.name "${{ secrets.GH_ORG_NAME }}"
+          git config --global url.https://${{ secrets.GH_TOKEN }}@github.com/.insteadOf https://github.com/
+
+      - name: "STEP :|: reset origin/dev branch"
+        run: |
+          # ▓ NOTE: ▓ IMPORTANT
+          git fetch
+          git checkout main
+          git pull origin main
+          git checkout dev
+          git reset --hard main
+          git push --force origin dev
+
+  # ╭──────────────────────────────────────────────────────────────────╮
+  # │ NOTE:                                                            │
+  # │ ➤ [4] auto-deploy project to target server.                      │
+  # ╰──────────────────────────────────────────────────────────────────╯
+
+  deploy:
+    name: 🚀 Deployment
+    # if: false
+    needs: create-release
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: SSH to Remote Server
+        # 🔗 read-more :|: https://github.com/appleboy/ssh-action
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          key: ${{secrets.WEB_SERVER_KEY}}
+          username: ${{secrets.WEB_SERVER_USERNAME}}
+          host: ${{secrets.WEB_SERVER_HOST}}
+          port: ${{secrets.WEB_SERVER_PORT}}
+          script: |
+            # ╭──────────────────────────────────────────────────────────────────╮
+            # │ Navigate project directory on server                             │
+            # ╰──────────────────────────────────────────────────────────────────╯
+            cd apidatanarratives
+            # ╭──────────────────────────────────────────────────────────────────╮
+            # │ Update directory with latests changes                            │
+            # ╰──────────────────────────────────────────────────────────────────╯
+            git stash
+            git pull origin main
+            # ╭──────────────────────────────────────────────────────────────────╮
+            # │ Run makefile deploy Docker Command                               │
+            # ╰──────────────────────────────────────────────────────────────────╯
+            make docker-start
